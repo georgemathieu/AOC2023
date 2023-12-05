@@ -43,7 +43,6 @@ public class Day4_Part2 {
                 numberOfCards.put(i, numberOfCards.get(i) + numberOfCards.get(key));
             }
         }
-
         int sum = numberOfCards.values().stream().mapToInt(Integer::intValue).sum();
         System.out.println(sum);
     }

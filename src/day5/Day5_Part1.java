@@ -14,15 +14,15 @@ public class Day5_Part1 {
 
         String[] components = input.split("\r\n\r\n");
 
-        List<Range> maps = new ArrayList<>();
+        List<List<Range>> maps = new ArrayList<>();
         for (int componentId = 1; componentId < components.length; componentId++) {
             String[] componentContent = components[componentId].split("\r\n");
-            Range range = null;
+            List<Range> ranges = new ArrayList<>();
             for(int i = 1; i < componentContent.length; i++) { // Ignore first line
                 List<Long> l = Arrays.stream(componentContent[i].split(" ")).map(Long::parseLong).toList();
-                map = addRange(map, l.get(0), l.get(1), l.get(2));
+                ranges.add((new Range(l.get(0), l.get(1), l.get(2))));
             }
-            maps.add(map);
+            maps.add(ranges);
         }
 
         List<Long> seeds = new ArrayList<>();
@@ -33,8 +33,14 @@ public class Day5_Part1 {
 
         long lowestLocation = Long.MAX_VALUE;
         for (Long seed : seeds) {
-            for (Map<Long, Long> map : maps) {
-                seed = map.getOrDefault(seed, seed);
+            for (List<Range> ranges : maps) {
+                for (Range range : ranges) {
+                    long newSeed = range.getMapping(seed);
+                    if (seed != newSeed) {
+                        seed = newSeed;
+                        break;
+                    }
+                }
             }
             if (seed < lowestLocation) {
                 lowestLocation = seed;
@@ -44,12 +50,6 @@ public class Day5_Part1 {
         System.out.println(lowestLocation);
     }
 
-    private static Map addRange(Map<Long, Long> map, long destinationRange, long sourceRange, long rangeLength) {
-        for (int i = 0; i < rangeLength; i++) {
-            map.put(sourceRange + i, destinationRange + i);
-        }
-        return map;
-    }
 }
 
 class Range {
