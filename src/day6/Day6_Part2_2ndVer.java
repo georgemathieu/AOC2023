@@ -18,9 +18,9 @@ public class Day6_Part2_2ndVer {
         long recordDistance = Long.parseLong(lines[1].split(":")[1]);
 
         // loadingTime * (raceTime - loadingTime) -  recordDistance
-        // loadingTime ^2 + loadingTime * raceTime - recordDistance
+        // -loadingTime ^2 - loadingTime * raceTime - recordDistance
         // Inéquation second degré
-        // a > 0, parabole vers le bas
+        // a < 0, parabole vers le bas
 
         long delta = (long) Math.pow(raceTime, 2) - 4 * 1 * recordDistance;
         long solution1 = (long) (-1 * raceTime - Math.sqrt(delta)) / 2;
