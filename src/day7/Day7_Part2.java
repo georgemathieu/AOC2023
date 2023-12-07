@@ -28,16 +28,17 @@ public class Day7_Part2 {
         long sum = 0;
         int cpt = 1;
         for (Integer handBid : handMap.values()) {
-            sum += (cpt * handBid);
+            sum += (long) cpt * handBid;
             cpt++;
         }
+        // 252113488
         System.out.println(sum);
     }
 }
 
 class Hand2 implements Comparable<Hand2> {
-    private List<CardType2> cards = new ArrayList<>();
-    private HandType2 type;
+    private final List<CardType2> cards;
+    private final HandType2 type;
 
     public Hand2(List<CardType2> cards) {
         this.cards = cards;
@@ -48,11 +49,9 @@ class Hand2 implements Comparable<Hand2> {
     public int compareTo(Hand2 o) {
         if (this.type.ordinal() < o.type.ordinal()) return 1;
         if (this.type.ordinal() > o.type.ordinal()) return -1;
-        if (this.type.ordinal() == o.type.ordinal()) {
-            for (int i = 0; i < cards.size(); i++) {
-                if (this.cards.get(i).ordinal() < o.cards.get(i).ordinal()) return 1;
-                if (this.cards.get(i).ordinal() > o.cards.get(i).ordinal()) return -1;
-            }
+        for (int i = 0; i < cards.size(); i++) {
+            if (this.cards.get(i).ordinal() < o.cards.get(i).ordinal()) return 1;
+            if (this.cards.get(i).ordinal() > o.cards.get(i).ordinal()) return -1;
         }
         return 0;
     }
@@ -90,15 +89,10 @@ enum HandType2 {
     public static HandType2 toEnum(List<CardType2> cards) {
         Map<CardType2, Integer> count = new HashMap<>();
         for (CardType2 card : cards) {
-            Integer cardCount = count.get(card);
-            if (cardCount == null) {
-                count.put(card, 1);
-            } else {
-                count.put(card, cardCount + 1);
-            }
+            count.merge(card, 1, Integer::sum);
         }
 
-        HandType2 handType = null;
+        HandType2 handType;
         Integer nbJ = count.get(CardType2.J); // Store nb of J
         count.remove(CardType2.J);
         handType = getHandType2(count, nbJ == null ? 0 : nbJ);
@@ -113,31 +107,25 @@ enum HandType2 {
     private static HandType2 getHandType2(Map<CardType2, Integer> count, Integer nbJ) {
         HandType2 handType;
         switch (count.entrySet().size() + nbJ) { // Translate nb of J to garbage
-            case 1:
-                handType = Perfect;
-                break;
-            case 4:
-                handType = Pair;
-                break;
-            case 2:
+            case 1 -> handType = Perfect;
+            case 4 -> handType = Pair;
+            case 2 -> {
                 OptionalInt max2 = count.values().stream().mapToInt(Integer::intValue).max();
                 if (max2.isPresent() && max2.getAsInt() > 3) {
                     handType = Carre;
                 } else {
                     handType = Full;
                 }
-                break;
-            case 3:
+            }
+            case 3 -> {
                 OptionalInt max3 = count.values().stream().mapToInt(Integer::intValue).max();
                 if (max3.isPresent() && max3.getAsInt() > 2) {
                     handType = Brelan;
                 } else {
                     handType = Double;
                 }
-                break;
-            default:
-                handType = Normal;
-                break;
+            }
+            default -> handType = Normal;
         }
         return handType;
     }
