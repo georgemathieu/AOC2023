@@ -8,6 +8,8 @@ import java.util.*;
 
 public class Day11_Part2 {
 
+    private static final int INCREMENT = 999_999;
+
     public static void main(String[] args) throws IOException {
         Path inputPath = Paths.get("src/day11/input.txt");
         String input = Files.readString(inputPath);
@@ -25,11 +27,11 @@ public class Day11_Part2 {
             carte.add(charList);
         }
 
-        // Expand
+        // No more Expand :(
+        List<Integer> emptyRowIds = new ArrayList<>();
         for (int i = 0; i < carte.size(); i++) {
             if (carte.get(i).stream().noneMatch(c -> c == '#')) {
-                carte.add(i, new ArrayList<>(carte.get(i)));
-                i++;
+                emptyRowIds.add(i);
             }
         }
 
@@ -44,14 +46,7 @@ public class Day11_Part2 {
                 }
             }
         }
-
-        for (List<Character> characters : carte) {
-            for (int j = characters.size() - 1; j >= 0; j--) {
-                if (emptyColumns.get(j) != null && emptyColumns.get(j)) {
-                    characters.add(j, '.');
-                }
-            }
-        }
+        List<Integer> emptyColumnsIds = emptyColumns.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).toList();
 
         Map<Pair, Long> distanceByPair = new HashMap<>();
         List<Coord> galaxies = new ArrayList<>();
@@ -65,20 +60,28 @@ public class Day11_Part2 {
 
         for (Coord c1 : galaxies) {
             for (Coord c2 : galaxies) {
-                distanceByPair.put(new Pair(c1, c2), (long) Math.abs(c2.x - c1.x) + Math.abs(c2.y - c1.y));
+                long distance = 0l;
+                for (Integer emptyColumnsId : emptyColumnsIds) {
+                    if ((c2.y < emptyColumnsId && emptyColumnsId < c1.y)
+                            || (c1.y < emptyColumnsId && emptyColumnsId < c2.y)) {
+                        distance += INCREMENT;
+                    }
+                }
+
+                for (Integer emptyRowId : emptyRowIds) {
+                    if ((c2.x < emptyRowId && emptyRowId < c1.x)
+                            || (c1.x < emptyRowId && emptyRowId < c2.x)) {
+                        distance += INCREMENT;
+                    }
+                }
+
+                distance += (long) Math.abs(c2.x - c1.x) + Math.abs(c2.y - c1.y);
+                distanceByPair.put(new Pair(c1, c2), distance);
             }
         }
 
         long sum = distanceByPair.values().stream().mapToLong(Long::longValue).sum();
-
-        // Print debug
-        /*for (List<Character> characters : carte) {
-            for (Character character : characters) {
-                System.out.print(character);
-            }
-            System.out.println();
-        }*/
         System.out.println(sum);
-        // 9312968
+        // 597714117556
     }
 }
