@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class Day11_Part1 {
+public class Day11_Part2 {
 
     public static void main(String[] args) throws IOException {
         Path inputPath = Paths.get("src/day11/input.txt");
@@ -80,67 +80,5 @@ public class Day11_Part1 {
         }*/
         System.out.println(sum);
         // 9312968
-    }
-}
-
-class Pair {
-    Coord c1;
-    Coord c2;
-
-    public Pair(Coord c1, Coord c2) {
-        this.c1 = c1;
-        this.c2 = c2;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pair pair = (Pair) o;
-        return Objects.equals(c1, pair.c1) && Objects.equals(c2, pair.c2) || Objects.equals(c1, pair.c2) && Objects.equals(c2, pair.c1);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(c1, c2) + Objects.hash(c2, c1);
-    }
-
-    @Override
-    public String toString() {
-        return "Pair{" +
-                "c1=" + c1 +
-                ", c2=" + c2 +
-                '}';
-    }
-}
-
-class Coord {
-    int x;
-    int y;
-
-    public Coord(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Coord coord = (Coord) o;
-        return x == coord.x && y == coord.y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
-
-    @Override
-    public String toString() {
-        return "Coord{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
     }
 }
